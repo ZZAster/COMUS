@@ -20,6 +20,7 @@ dgl==0.8.x
 jieba
 sympy
 bs4
+stanza
 timeout_decorator
 ```
 

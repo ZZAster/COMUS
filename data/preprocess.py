@@ -6,6 +6,8 @@ from data_utils import parse_formula, jieba_retokenize_for_dep, convert_nodes
 
 def make_parse():
     '''parse formulas and replace them with [MATH]'''
+    # we store our data in json line format, such as
+    # "{"id": "xxx", "content": "xxx"}\n{"id": "xxx", "content": "xxx"}"
     f = open('text_data.json')
     w = open('parsed_data.json', "w")
     for data in tqdm(map(json.loads, f)):
