@@ -26,7 +26,11 @@ timeout_decorator
 
 ## Dataset
 
-Data cannot be shared temporarily due to commercial reasons. We put the preprocessing code of the data in the `data` folder as a reference.
+Datasets cannot be shared temporarily for some commercial reasons. We put the data pre-processing code in the `data` folder for reference. In general, the pre-processing of the data consists of the following parts:
+- Getting a clean corpus of math problems with formula location identifiers (like \$a + b\$).
+- Parsing the formulas into operator trees. In this project, we made some modifications to [TangentS](https://github.com/BehroozMansouri/TangentCFT/tree/master/TangentS) to accomplish this step (using sympy instead of latexml to perform latex-to-mathml formatting). **We suggest referring to the original project's code (TangentS) for this step.**
+- Dependency parsing for math problem texts. We use [stanza](https://stanfordnlp.github.io/stanza/depparse.html) to do this.
+- Combining the dependency parsing tree and the operator tree to obtain the math syntax graph.
 
 ## Training
 
