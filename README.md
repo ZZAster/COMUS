@@ -35,12 +35,12 @@ Datasets cannot be shared temporarily for some commercial reasons. We put the da
 
 ## Training
 
-#### Base Model
+### Base Model
 Please download the initial model from https://huggingface.co/models.
 - Make sure your initial model is bert-like (bert or roberta). Otherwise you need to modify the training and model code.
 - We run this project with bert-base. You can adjust the hyperparameters of GAT in `model/config.py` if you want to try larger model.
 
-#### Scripts
+### Scripts
 You can run pre-training with single GPU by:
 ```bash
 bash scripts/run_pretrain.sh
@@ -50,7 +50,7 @@ or run distributed data paralle pre-training with multiple GPUs by:
 bash scripts/run_pretrain_ddp.sh
 ```
 
-#### Arguments
+### Arguments
 You can check more details about training arguments in the [official docs](https://huggingface.co/transformers/v4.6.0/main_classes/trainer.html#trainingarguments) of huggingface. We explain some special arguments here.
 - **add_token_path** - There may be some important words in your corpus that cannot be correctly split by the tokenizer of the pre-trained model, such as mathematical symbols. You can add them to the vocab by this argument and train the embedding from scratch.
 - **graph_vocab_path** - The node set of math syntax graph.
