@@ -27,11 +27,17 @@ timeout_decorator
 ## Dataset
 
 Datasets cannot be shared temporarily for some commercial reasons. We put the data pre-processing code in the `data` folder for reference. In general, the pre-processing of the data consists of the following parts:
+
 - Getting a clean corpus of math problems with formula location identifiers (like \$ a + b \$).
 - Parsing the formulas into operator trees. In this project, we made some modifications to [TangentS](https://github.com/BehroozMansouri/TangentCFT/tree/master/TangentS) to accomplish this step (using sympy instead of latexml to perform latex-to-mathml formatting). **We suggest referring to the original project's code (TangentS) for this step.**
 - Dependency parsing for math problem texts. We use [stanza](https://stanfordnlp.github.io/stanza/depparse.html) to do this.
 - Combining the dependency parsing tree and the operator tree to obtain the math syntax graph.
 - Organizing the data (including text and math syntax graph) into Dataset format.
+
+We provide two fake samples in `data/example_data.json`. You can process them with following codes and see the data generated in each stage.
+```bash
+cd data && python preprocess.py
+```
 
 ## Training
 
@@ -52,6 +58,8 @@ bash scripts/run_pretrain_ddp.sh
 
 ### Arguments
 You can check more details about training arguments in the [official docs](https://huggingface.co/transformers/v4.6.0/main_classes/trainer.html#trainingarguments) of huggingface. We explain some special arguments here.
+- **model_name_or_path** - Directory of model checkpoint for weights initialization. Put your downloaded base model here.
+- **data_path** - Your pre-processed training data saved in Dataset format (line 103 of `data/preprocess.py`).
 - **add_token_path** - There may be some important words in your corpus that cannot be correctly split by the tokenizer of the pre-trained model, such as mathematical symbols. You can add them to the vocab by this argument and train the embedding from scratch.
 - **graph_vocab_path** - The node set of math syntax graph.
 
