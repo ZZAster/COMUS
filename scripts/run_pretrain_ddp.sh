@@ -1,10 +1,7 @@
 #!/bin/bash
 export STORE_DIR=XXX
-# trainer of transformers will automatically call all 
-# available GPUs for data paralle training
-export CUDA_VISIBLE_DEVICES=0
 
-python pretrain.py \
+python -m torch.distributed.launch --nproc_per_node=4 pretrain.py \
     --model_name_or_path $STORE_DIR/model/bert-base-chinese \
     --tokenizer_path $STORE_DIR/model/tokenizer \
     --data_path $STORE_DIR/data/XXX \
