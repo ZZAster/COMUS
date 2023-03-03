@@ -3,7 +3,6 @@ export STORE_DIR=XXX
 
 python -m torch.distributed.launch --nproc_per_node=4 pretrain.py \
     --model_name_or_path $STORE_DIR/model/bert-base-chinese \
-    --tokenizer_path $STORE_DIR/model/tokenizer \
     --data_path $STORE_DIR/data/XXX \
     --graph_vocab_path $STORE_DIR/node_vocab.txt \
     --seed 2021 \
