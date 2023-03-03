@@ -18,7 +18,10 @@ def convert_nodes(node):
 
 
 def jieba_retokenize_for_dep(words):
-    '''replace formulas with [MATH]'''
+    '''
+    replace formulas with [MATH] and tokenize the text
+    you can remove or modify the tokenization if your data are not in Chinese
+    '''
     new_words = []
     tag = False
     for word in words:

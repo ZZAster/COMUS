@@ -38,6 +38,7 @@ We provide two fake samples in `data/example_data.json`. You can process them wi
 ```bash
 cd data && python preprocess.py
 ```
+***Note: You need to modify some codes if your data are not in Chinese. Check line 20 of `data/data_utils.py` and line 31~40 of `data/preprocess.py`***
 
 ## Training
 
