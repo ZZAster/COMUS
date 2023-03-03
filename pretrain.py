@@ -3,6 +3,7 @@ from datasets import load_from_disk
 import logging
 import sys
 import os
+import json
 
 import transformers
 
@@ -36,7 +37,6 @@ class ModelArguments:
         default=None,
         metadata={
             "help": "The model checkpoint for weights initialization."
-            "Don't set if you want to train a model from scratch."
         },
     )
     g_num_layers: int = field(
@@ -49,7 +49,7 @@ class ModelArguments:
         default=None,
         metadata={
             "help": "The tokenizer checkpoint."
-            "Don't set if you want to train a model from scratch."
+            "Default to model_name_or_path if not set."
         },
     )
 
@@ -63,6 +63,10 @@ class DataTrainingArguments:
     data_path: str = field(
         default=None,
         metadata={"help": "The input training data file (a text file)."}
+    )
+    add_token_path: str = field(
+        default=None,
+        metadata={"help": "The additional tokens of your corpus. (a json file that stores a word list)"}
     )
     graph_vocab_path: str = field(
         default=None,
@@ -102,11 +106,15 @@ def main():
             graph_vocab[word.strip()] = len(graph_vocab)
 
     model_path = model_args.model_name_or_path
+    tokenizer_path = model_args.tokenizer_path if model_args.tokenizer_path else model_args.model_name_or_path
     config = GATBertConfig.from_pretrained(model_path, g_num_layers=model_args.g_num_layers, g_in_dim=len(graph_vocab))
     
     model = BertForPreTraining.from_pretrained(model_path, config=config)
     
-    tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_path)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+    if data_args.add_token_path:
+        with open(data_args.add_token_path) as f:
+            tokenizer.add_tokens(json.load(f))
     model.resize_token_embeddings(len(tokenizer))
 
     train_dataset = load_from_disk(data_args.data_path)
