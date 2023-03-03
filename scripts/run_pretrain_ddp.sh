@@ -2,9 +2,9 @@
 export STORE_DIR=XXX
 
 python -m torch.distributed.launch --nproc_per_node=4 pretrain.py \
-    --model_name_or_path $STORE_DIR/model/bert-base-chinese \
-    --data_path $STORE_DIR/data/XXX \
-    --graph_vocab_path $STORE_DIR/node_vocab.txt \
+    --model_name_or_path $STORE_DIR/ckpt/bert-base-chinese \
+    --data_path $STORE_DIR/data/graph_dataset \
+    --graph_vocab_path $STORE_DIR/data/graph_vocab.json \
     --seed 2021 \
     --learning_rate 5e-5 \
     --warmup_ratio 0.05 \

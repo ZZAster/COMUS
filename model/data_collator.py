@@ -57,11 +57,9 @@ class DataCollatorForGraph:
 class DataCollatorForGraphPreTrain:
 
     tokenizer: PreTrainedTokenizerBase
-    graph_vocab: dict
     mlm_probability: float = 0.15
 
     def __call__(self, examples: List[InputDataClass]) -> Dict[str, torch.Tensor]:
-        # input_keys = ["input_ids", "attention_mask", "graph", "ccp_label"]
         batch = {}
         batch['input_ids'] = torch.tensor([e['input_ids'] for e in examples])
         batch['token_type_ids'] = torch.tensor([e['token_type_ids'] for e in examples])
@@ -69,10 +67,10 @@ class DataCollatorForGraphPreTrain:
         batch["attention_mask"][batch["input_ids"] == self.tokenizer.pad_token_id] = 0
 
         # prepare graph
-        unbatched_g = [dgl.graph((e["src"], e["dst"]), num_nodes=len(e["nodes_id"])) for e in examples]
+        unbatched_g = [dgl.graph((e["src"], e["dst"]), num_nodes=len(e["node_ids"])) for e in examples]
         g = batch_graph(unbatched_g)
-        g.edata['rel_ids'] = torch.tensor(sum([e["rel_id"] for e in examples], []))
-        g.ndata['node_ids'] = torch.tensor(sum([e["nodes_id"] for e in examples], []))
+        g.edata['rel_ids'] = torch.tensor(sum([e["rel_ids"] for e in examples], []))
+        g.ndata['node_ids'] = torch.tensor(sum([e["node_ids"] for e in examples], []))
         batch["graph"] = g
 
         # prepare mask tokens and labels

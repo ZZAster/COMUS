@@ -62,7 +62,7 @@ class DataTrainingArguments:
 
     data_path: str = field(
         default=None,
-        metadata={"help": "The input training data file (a text file)."}
+        metadata={"help": "The input training data."}
     )
     add_token_path: str = field(
         default=None,
@@ -70,7 +70,15 @@ class DataTrainingArguments:
     )
     graph_vocab_path: str = field(
         default=None,
-        metadata={"help": "The graph vocab data file (a text file)."}
+        metadata={"help": "The graph vocab data file (a json file that stores a node list)."}
+    )
+    max_input_length: int = field(
+        default=256,
+        metadata={"help": "The max length for text input ids."}
+    )
+    mlm_probability: float = field(
+        default=0.15,
+        metadata={"help": "Ratio of tokens to mask for maksed language modeling loss"}
     )
 
 
@@ -100,10 +108,8 @@ def main():
 
     set_seed(training_args.seed)
 
-    graph_vocab = {}
     with open(data_args.graph_vocab_path) as f:
-        for word in f:
-            graph_vocab[word.strip()] = len(graph_vocab)
+        graph_vocab = json.load(f)
 
     model_path = model_args.model_name_or_path
     tokenizer_path = model_args.tokenizer_path if model_args.tokenizer_path else model_args.model_name_or_path
@@ -118,10 +124,19 @@ def main():
     model.resize_token_embeddings(len(tokenizer))
 
     train_dataset = load_from_disk(data_args.data_path)
+    
+    max_length = min(512, data_args.max_input_length)
+    
+    def process(examples):
+        results = tokenizer(examples['content'], max_length=max_length, padding=True, truncation=True)
+        for k in ['node_ids', 'rel_ids', 'src', 'dst']:
+            results[k] = examples[k]
+        return results
+    
+    train_dataset = train_dataset.map(process, batched=True)
 
     data_collator = DataCollatorForGraphPreTrain(
-        tokenizer=tokenizer, 
-        graph_vocab=graph_vocab,
+        tokenizer=tokenizer, mlm_probability=data_args.mlm_probability
     )
 
     new_module = ['gat', 'rel']
